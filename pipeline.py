@@ -29,7 +29,8 @@ def predict_all_files(selected_model, labels, folder_path):
         classify_image(selected_model, labels, file)
 def detect_changes(folder_paths):
     previous_states = {folder_path: get_files_in_folder(folder_path) for folder_path in folder_paths}
-
+    os.system('cls')
+    print("Running Auto-Checkout...")
     try:
         while True:
             time.sleep(1.5)
@@ -41,7 +42,6 @@ def detect_changes(folder_paths):
                 modified_files = {file for file in set(current_state) if file in previous_states[folder_path] and current_state[file] > previous_states[folder_path][file]}
 
                 if added_files or modified_files:
-                    os.system('cls')
                     now = datetime.now()
                     now_d = date.today()
                     current_time = now.strftime("%H:%M:%S")
@@ -63,13 +63,13 @@ if __name__ == "__main__":
     warm_fd_pth = r"img\1.jpg"
     with open('food_labels.txt', 'r', encoding='utf-8') as file:
         class_food = [line.strip() for line in file.readlines()]
-    food_model = tf.keras.models.load_model('food.keras')
+    food_model = tf.keras.models.load_model('pretrained/food.keras')
 
 
     warm_dr_pth = r"img\2.jpg"
     with open('drink_labels.txt', 'r', encoding='utf-8') as file:
         class_drink = [line.strip() for line in file.readlines()]
-    drink_model = tf.keras.models.load_model('drink.keras')
+    drink_model = tf.keras.models.load_model('pretrained/drink.keras')
 
 
     folder_paths = [r"yolov5\runs\detect\exp\crops\drink",
