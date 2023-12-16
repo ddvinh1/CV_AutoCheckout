@@ -52,5 +52,5 @@ def classify_image(model, labels, image_path):
 
     pred = np.argmax(prediction[0])
     #print(pred)
-    print(labels[pred])
+    #print(labels[pred])
     return labels[pred]

@@ -25,8 +25,18 @@ def load_model_for_folder(folder_path):
 
 def predict_all_files(selected_model, labels, folder_path):
     files = [file for file in Path(folder_path).iterdir() if file.is_file()]
+    pred_labels = []
     for file in files:
-        classify_image(selected_model, labels, file)
+        pred_labels.append(classify_image(selected_model, labels, file))
+    return pred_labels
+
+def get_date_time():
+    now = datetime.now()
+    now_d = date.today()
+    current_time = now.strftime("%H:%M:%S")
+    current_date = now_d.strftime("%d/%m/%Y")
+    print("Bill created at: ", current_date, current_time,"\n\n")
+
 def detect_changes(folder_paths):
     previous_states = {folder_path: get_files_in_folder(folder_path) for folder_path in folder_paths}
     os.system('cls')
@@ -34,7 +44,7 @@ def detect_changes(folder_paths):
     try:
         while True:
             time.sleep(1.5)
-
+            label = None
             for folder_path in folder_paths:
                 current_state = get_files_in_folder(folder_path)
                 added_files = set(current_state) - set(previous_states[folder_path])
@@ -42,19 +52,19 @@ def detect_changes(folder_paths):
                 modified_files = {file for file in set(current_state) if file in previous_states[folder_path] and current_state[file] > previous_states[folder_path][file]}
 
                 if added_files or modified_files:
-                    now = datetime.now()
-                    now_d = date.today()
-                    current_time = now.strftime("%H:%M:%S")
-                    current_date = now_d.strftime("%d/%m/%Y")
-                    print("\nCurrent Time =", current_date, current_time)
-                    print("Your bill include: \n")
-                    # Use the pre-loaded model based on the detected folder
                     selected_model, labels = load_model_for_folder(folder_path)
+                    predicted_labels = predict_all_files(selected_model, labels, folder_path)
+                    for label in predicted_labels:
+                        print(label)
 
-                    predict_all_files(selected_model, labels, folder_path)
+                    # Use the pre-loaded model based on the detected folder
+                    #selected_model, labels = load_model_for_folder(folder_path)
+                    #predict_all_files(selected_model, labels, folder_path)
+
 
                 previous_states[folder_path] = current_state
-
+            if label != None:
+                get_date_time()
 
     except KeyboardInterrupt:
         pass
